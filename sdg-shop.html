@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDG Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --blue: #1a6fc4;
+    --blue-dark: #0f4e8f;
+    --blue-light: #e6f1fb;
+    --blue-accent: #2580d8;
+    --bg: #f0f6fc;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7a;
+    --border: #d0dde8;
+    --success: #1a7a4a;
+    --success-bg: #e8f5ee;
+    --warning-bg: #fef9ec;
+    --warning-border: #f0c040;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 2px 12px rgba(26,111,196,0.08);
+    --shadow-card: 0 4px 20px rgba(26,111,196,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--blue);
+    color: white;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+  .sdg-logo {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cart-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .cart-btn:hover { background: rgba(255,255,255,0.25); }
+  .cart-badge {
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+
+  .products-count { font-size: 14px; color: var(--text-muted); }
+
+  /* ── PRODUCTS GRID ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1rem;
+  }
+  .product-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
+    position: relative;
+  }
+  .product-card:hover {
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+  }
+  .product-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+  }
+  .product-img img { width: 100%; height: 100%; object-fit: cover; }
+  .badge-low {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ff6b35;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .product-body { padding: 12px; }
+  .product-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; line-height: 1.3; transition: color 0.15s; }
+  .product-card:hover .product-name { color: var(--blue); }
+  .price-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; min-height: 20px; }
+  .product-price { color: var(--blue); font-weight: 700; font-size: 16px; }
+  .color-dots { display: flex; gap: 4px; }
+  .color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+  }
+  .add-to-cart-btn {
+    width: 100%;
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .add-to-cart-btn:hover { background: var(--blue-dark); }
+  .add-to-cart-btn.sold-out {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,20,40,0.5);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 780px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    transform: translateY(20px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 580px) {
+    .modal-inner { grid-template-columns: 1fr; }
+  }
+  .modal-img-section {
+    padding: 1.5rem;
+    background: var(--bg);
+    border-radius: 16px 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  @media (max-width: 580px) {
+    .modal-img-section { border-radius: 16px 16px 0 0; }
+  }
+  .modal-main-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+  }
+  .modal-main-img img { width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius); }
+  .modal-thumbs { display: flex; gap: 8px; }
+  .modal-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    cursor: pointer;
+    object-fit: cover;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .modal-thumb.active { border-color: var(--blue); }
+  .modal-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-info-section { padding: 1.5rem; }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.06);
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    transition: background 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .modal-close:hover { background: rgba(0,0,0,0.12); }
+  .modal-name { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .modal-price { color: var(--blue); font-size: 22px; font-weight: 700; margin-bottom: 14px; }
+  .option-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+    margin-top: 12px;
+  }
+  .size-options { display: flex; flex-wrap: wrap; gap: 6px; }
+  .size-btn {
+    padding: 5px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+  .size-btn:hover { border-color: var(--blue); }
+  .size-btn.selected { border-color: var(--blue); background: var(--blue); color: white; }
+  .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .color-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--white);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+  .color-btn:hover { border-color: var(--blue); }
+  .color-btn.selected { border-color: var(--blue); background: var(--blue-light); }
+  .color-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .qty-add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .qty-select {
+    padding: 9px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    width: 90px;
+    background: var(--white);
+  }
+  .modal-add-btn {
+    flex: 1;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s;
+    padding: 9px;
+  }
+  .modal-add-btn:hover { background: var(--blue-dark); }
+  .modal-desc { font-size: 13px; color: var(--text-muted); margin-top: 14px; line-height: 1.6; }
+  .modal-meta {
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px 16px;
+    font-size: 13px;
+  }
+  .meta-key { color: var(--text-muted); font-weight: 500; }
+
+  /* ── CART PAGE ── */
+  .page { display: none; }
+  .page.active { display: block; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 1.25rem;
+    text-decoration: none;
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    padding: 0;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .cart-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .cart-grid { grid-template-columns: 1fr; }
+  }
+  .cart-items-card, .order-summary-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .cart-item {
+    display: flex;
+    gap: 14px;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .cart-item:last-child { border-bottom: none; }
+  .cart-item-img {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .cart-item-price { color: var(--blue); font-weight: 700; font-size: 15px; float: right; }
+  .cart-item-attrs { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+  .cart-item-controls { display: flex; gap: 8px; align-items: center; }
+  .qty-select-sm {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+  }
+  .remove-btn {
+    background: none;
+    border: 1px solid var(--border);
+    padding: 5px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+  }
+  .remove-btn:hover { border-color: #e24b4a; color: #e24b4a; }
+
+  .order-summary-card { padding: 1.25rem; }
+  .order-total-big { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+  .order-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    margin-top: 14px;
+  }
+  .delivery-options { display: flex; flex-direction: column; gap: 8px; }
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 0;
+  }
+  .radio-option input[type="radio"] { accent-color: var(--blue); width: 16px; height: 16px; }
+  .checkout-btn {
+    width: 100%;
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 16px;
+    transition: background 0.15s;
+  }
+  .checkout-btn:hover { background: var(--blue-dark); }
+  .checkout-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+  /* ── NAME FORM ── */
+  .name-form {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-label { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+  .form-input {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+    background: var(--white);
+  }
+  .form-input:focus { border-color: var(--blue); }
+
+  /* ── SUCCESS PAGE ── */
+  .success-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 1rem;
+    background: var(--success-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .success-icon svg { color: var(--success); }
+  .success-title { font-size: 24px; font-weight: 700; color: var(--success); margin-bottom: 8px; letter-spacing: -0.3px; }
+  .success-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .success-email { font-weight: 600; color: var(--text); }
+  .success-contact { font-size: 14px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .success-contact a { color: var(--blue); text-decoration: none; font-weight: 500; }
+  .order-item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  .order-item-row:last-child { border-bottom: none; }
+  .order-item-img {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .order-item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .order-item-info { flex: 1; }
+  .order-item-name { font-size: 14px; font-weight: 600; }
+  .order-item-attrs { font-size: 12px; color: var(--text-muted); }
+  .order-item-price { color: var(--blue); font-weight: 700; font-size: 15px; }
+  .order-meta-table {
+    width: 100%;
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    text-align: left;
+  }
+  .order-meta-table tr td { padding: 5px 0; font-size: 14px; }
+  .order-meta-table .meta-key { color: var(--text-muted); width: 120px; font-weight: 500; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--blue-light);
+    border-top: 1px solid var(--border);
+    padding: 12px 1.5rem;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+  }
+  .footer-contacts {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .footer-person {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+  }
+  .footer-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .footer-avatar.jill { background: #e97040; }
+  .footer-avatar.fran { background: #1a6fc4; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #1a1a2e;
+    color: white;
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── EMPTY CART ── */
+  .empty-cart {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+  }
+  .empty-cart-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-cart h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+
+  /* SPINNER */
+  .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── LUCIDE ICONS ── */
+  /* Buttons */
+  .add-to-cart-btn svg, .modal-add-btn svg, .cart-btn svg,
+  .back-link svg, .checkout-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .remove-btn svg { width: 14px; height: 14px; }
+  /* Product card emoji fallback */
+  .product-img-emoji { background: var(--bg); }
+  .product-img-emoji span { font-size: 48px; line-height: 1; }
+  /* Empty cart */
+  .empty-cart-icon svg { width: 52px; height: 52px; color: var(--border); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .main-wrap { padding: 1rem; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 380px) {
+    .products-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand" onclick="showPage('home')" style="cursor:pointer;" role="link" aria-label="SDG Shop home">
+    <div class="sdg-logo">sdg</div>
+    SDG Shop
+  </div>
+  <div class="header-right">
+    <button class="cart-btn" onclick="showPage('cart')">
+      <i data-lucide="shopping-cart"></i> Cart
+      <div class="cart-badge" id="cart-count">0</div>
+    </button>
+  </div>
+</header>
+
+<!-- PAGES -->
+
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page active">
+  <div class="main-wrap">
+
+    <!-- All Products -->
+    <div class="products-header">
+      <div>
+        <h2 class="section-title" style="margin-bottom:2px; margin-top: 1rem;">All Products</h2>
+        <div class="products-count" id="products-count">41 results</div>
+      </div>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div>All sales are final. No coupons are accepted. We do not match any competitor pricing! Contact Jill if you have any suggestions for future items.</div>
+    <div class="footer-contacts">
+      <div class="footer-person">
+        <div class="footer-avatar jill">JR</div>
+        <div><strong>Jill Rindt</strong><br>Office Manager</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===== CART PAGE ===== -->
+<div id="page-cart" class="page">
+  <div class="main-wrap">
+    <button class="back-link" onclick="showPage('home')">← Back to shopping</button>
+
+    <div id="cart-empty" class="empty-cart" style="display:none;">
+      <div class="empty-cart-icon"><i data-lucide="shopping-cart"></i></div>
+      <h3>Your cart is empty</h3>
+      <p>Head back to the shop to add some SDG gear!</p>
+    </div>
+
+    <div id="cart-content">
+      <!-- Name Form -->
+      <div class="name-form">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Your Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input class="form-input" id="first-name" type="text" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input class="form-input" id="last-name" type="text" placeholder="Last name">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:10px;">
+          <label class="form-label">Email Address *</label>
+          <input class="form-input" id="email-input" type="email" placeholder="john.doe@solutiondesign.com">
+        </div>
+      </div>
+
+      <div class="cart-grid">
+        <div class="cart-items-card" id="cart-items-list">
+          <!-- rendered by JS -->
+        </div>
+        <div class="order-summary-card">
+          <div style="font-size:14px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Order Total</div>
+          <div class="order-total-big" id="order-total">$0</div>
+
+          <div class="order-section-title">Delivery</div>
+          <div class="delivery-options">
+            <label class="radio-option">
+              <input type="radio" name="delivery" value="Pick up at SDG office" checked> Pick up at SDG office
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="delivery" value="Pick up from CM"> Pick up from CM
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="delivery" value="Ship to address (free)"> Ship to address (free)
+            </label>
+          </div>
+
+
+
+          <button class="checkout-btn" id="checkout-btn" onclick="checkout()">Check Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div>All sales are final. No coupons are accepted.</div>
+    <div class="footer-contacts">
+      <div class="footer-person">
+        <div class="footer-avatar jill">JR</div>
+        <div><strong>Jill Rindt</strong><br>Office Manager</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===== SUCCESS PAGE ===== -->
+<div id="page-success" class="page">
+  <div class="main-wrap">
+    <div class="success-wrap">
+      <div class="success-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="success-title" id="success-title">Thanks for your order!</div>
+      <div class="success-sub">
+        Great SDG swag choices. We've sent your order details and any pickup instructions to<br>
+        <span class="success-email" id="success-email">your email</span>
+      </div>
+      <div class="success-contact">Any questions or concerns? Reach out to <a href="mailto:jill@solutiondesign.com">Jill Rindt</a>.</div>
+
+      <div id="success-items"></div>
+
+      <table class="order-meta-table">
+        <tr><td class="meta-key">Order Number</td><td id="success-order-num" style="font-weight:600;"></td></tr>
+        <tr><td class="meta-key">Order Total</td><td id="success-total" style="font-weight:600;color:var(--text);"></td></tr>
+        <tr><td class="meta-key">Delivery</td><td id="success-delivery"></td></tr>
+        <tr><td class="meta-key">Payment</td><td id="success-payment" style="white-space:pre-line;"></td></tr>
+      </table>
+
+      <button class="checkout-btn" onclick="resetShop()" style="margin-top:1.5rem;background:var(--blue);">Continue Shopping</button>
+    </div>
+  </div>
+  <footer class="footer">
+    <div>All sales are final. No coupons are accepted.</div>
+  </footer>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-inner">
+      <div class="modal-img-section">
+        <div class="modal-main-img" id="modal-main-img">👕</div>
+        <div class="modal-thumbs" id="modal-thumbs"></div>
+      </div>
+      <div class="modal-info-section">
+        <div class="modal-name" id="modal-name">Product Name</div>
+        <div class="modal-price" id="modal-price">$25</div>
+
+        <div id="modal-size-section">
+          <div class="option-label">Size</div>
+          <div class="size-options" id="modal-sizes"></div>
+        </div>
+
+        <div id="modal-color-section">
+          <div class="option-label">Color</div>
+          <div class="color-options" id="modal-colors"></div>
+        </div>
+
+        <div class="qty-add-row">
+          <select class="qty-select" id="modal-qty">
+            <option>Qty: 1</option>
+            <option>Qty: 2</option>
+            <option>Qty: 3</option>
+            <option>Qty: 4</option>
+            <option>Qty: 5</option>
+          </select>
+          <button class="modal-add-btn" id="modal-add-btn" onclick="addToCartFromModal()"><i data-lucide="shopping-cart"></i> Add to cart</button>
+        </div>
+
+        <div class="modal-desc" id="modal-desc"></div>
+        <div class="modal-meta" id="modal-meta"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── PRODUCT DATA ──
+const SDG_BALANCE = 20;
+const SDG_BUCKS = 15;
+const SUPPORT_LOCAL = 5;
+
+const PRODUCTS = [
+  { id:'sweatshirt', img:'Store%20items/Photo=Photo27.png', colorImgs:{'Grey':'Store%20items/Photo=Photo27.png','Blue':'Store%20items/Photo=Photo27%20blue.png','Red':'Store%20items/Photo=Photo27%20red.png'}, name:'SDG Collegiate Sweatshirt', price:25, cat:'Apparel', emoji:'👕', desc:'Ultra soft 80% cotton, 20% polyester sweatshirt. Navy blue with white SDG logo across the chest.', sizes:['XS','S','M','L','XL','2XL','3XL'], colors:['Grey','Blue','Red'], colorHex:{'Grey':'#888','Blue':'#2580d8','Red':'#cc3333'}, brand:'DISTRICT', status:'Runs small', available:49, featured:true },
+  { id:'glasses', img:'Store%20items/Photo=Photo28.png', name:'SDG Glasses', price:5, cat:'Home', emoji:'🥛', desc:'Set of four SDG pint glasses.', sizes:[], colors:[], brand:'SDG', status:'In stock', available:20, featured:true },
+  { id:'massagegun', img:'Store%20items/Photo=Photo1.png', name:'Massage Gun', price:25, cat:'Electronics', emoji:'⚡', desc:'Portable handheld massage gun for muscle recovery.', sizes:[], colors:[], brand:'KNEADO', status:'In stock', available:10 },
+  { id:'hat', img:'Store%20items/Photo=Photo8.png', colorImgs:{'Grey':'Store%20items/Photo=Photo8.png','Navy':'Store%20items/Photo=Photo8.png','Orange':'Store%20items/Photo=Photo9.png'}, name:'Hat', price:10, cat:'Apparel', emoji:'🧢', desc:'SDG beanie hat — great for cold days!', sizes:[], colors:['Grey','Navy','Orange'], colorHex:{'Grey':'#888','Navy':'#1a3f6f','Orange':'#e97040'}, brand:'SDG', status:'In stock', available:30 },
+  { id:'tumbler', img:'Store%20items/Photo=Photo3.png', name:'Tumbler Set', price:25, cat:'Home', emoji:'🫙', desc:'Set of two SDG branded Tervis tumblers.', sizes:[], colors:[], brand:'Tervis', status:'Only 2 left', available:2, lowStock:true },
+  { id:'owned-tumbler', img:'Store%20items/Photo=Photo4.png', name:'Employee Owned Tumbler', price:5, cat:'Home', emoji:'☕', desc:'Employee-owned branded tumbler.', sizes:[], colors:[], brand:'SDG', status:'In stock', available:15 },
+  { id:'speaker', img:'Store%20items/Photo=Photo5.png', name:'Portable Speaker', price:10, cat:'Electronics', emoji:'🔊', desc:'Compact portable bluetooth speaker with SDG logo.', sizes:[], colors:[], brand:'SDG', status:'In stock', available:8 },
+  { id:'neck-sleeve', img:'Store%20items/Photo=Photo6.png', name:'Neck & Head Sleeve', price:10, cat:'Apparel', emoji:'🧣', desc:'Multi-use neck and head sleeve with all-over SDG logo print. Perfect for outdoor activities.', sizes:[], colors:[], brand:'SDG', status:'In stock', available:25 },
+  { id:'hoodie-zip-f', img:'Store%20items/Photo=Photo7.png', name:'Unisex Hoodie - Full Zip', price:25, cat:'Apparel', emoji:'🧥', desc:'Full zip unisex Carhartt hoodie with SDG logo.', sizes:['XS','S','M','L','XL','2XL','3XL'], colors:['Black','Grey','Navy'], colorHex:{'Black':'#222','Grey':'#888','Navy':'#1a3f6f'}, brand:'Carhartt', status:'In stock', available:18 },
+  { id:'dufflebag', img:'Store%20items/Photo=Photo30.png', name:'Duffle Bag', price:25, cat:'Accessories', emoji:'👜', desc:'Spacious SDG branded OGIO duffle bag.', sizes:[], colors:[], brand:'OGIO', status:'In stock', available:12 },
+  { id:'rocketbook', img:'Store%20items/Photo=Photo10.png', name:'Rocket Book', price:25, cat:'Accessories', emoji:'📓', desc:'Reusable smart notebook with SDG logo and pen included.', sizes:[], colors:[], brand:'Rocketbook', status:'Sold Out', available:0 },
+  { id:'hoodie-zip-w', img:'Store%20items/Photo=Photo17.png', name:"Women's Zip Up Hoodie", price:25, cat:'Apparel', emoji:'🧥', desc:'Women\'s zip up hoodie in multiple colors.', sizes:['XS','S','M','L','XL','2XL'], colors:['Black','Teal','Navy'], colorHex:{'Black':'#222','Teal':'#1d9e75','Navy':'#1a3f6f'}, brand:'SDG', status:'In stock', available:20 },
+  { id:'mens-golf', img:'Store%20items/Photo=Photo2.png', name:"Men's Golf Shirt", price:25, cat:'Apparel', emoji:'👔', desc:'SDG branded men\'s polo golf shirt.', sizes:['S','M','L','XL','2XL','3XL'], colors:['Navy','Black','White'], colorHex:{'Navy':'#1a3f6f','Black':'#222','White':'#f0f0f0'}, brand:'SDG', status:'In stock', available:22 },
+  { id:'mens-pullover', img:'Store%20items/Photo=Photo12.png', name:"Men's Button Pullover", price:25, cat:'Apparel', emoji:'👕', desc:'Lightweight long-sleeve button pullover shirt.', sizes:['S','M','L','XL','2XL'], colors:['Navy','Grey'], colorHex:{'Navy':'#1a3f6f','Grey':'#888'}, brand:'SDG', status:'In stock', available:14 },
+  { id:'womens-zip', img:'Store%20items/Photo=Photo14.png', name:"Women's Zip Up", price:25, cat:'Apparel', emoji:'🧥', desc:'Women\'s full zip-up jacket with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Navy','Purple'], colorHex:{'Navy':'#1a3f6f','Purple':'#534AB7'}, brand:'SDG', status:'In stock', available:9 },
+  { id:'unisex-pull', img:'Store%20items/Photo=Photo15.png', name:'Unisex Pull Over', price:25, cat:'Apparel', emoji:'👕', desc:'Comfortable unisex hooded pullover with SDG logo.', sizes:['XS','S','M','L','XL','2XL','3XL'], colors:['White','Grey'], colorHex:{'White':'#f0f0f0','Grey':'#888'}, brand:'SDG', status:'In stock', available:18 },
+  { id:'womens-half-zip', img:'Store%20items/Photo=Photo29.png', name:"Women's 1/2 Zip", price:25, cat:'Apparel', emoji:'🧥', desc:'Women\'s half zip pullover.', sizes:['XS','S','M','L','XL'], colors:['Pink','Red','Grey'], colorHex:{'Pink':'#d4537e','Red':'#cc3333','Grey':'#888'}, brand:'SDG', status:'In stock', available:11 },
+  { id:'womens-qzip', img:'Store%20items/Photo=Photo18.png', name:"Women's 1/4 Zip Microfleece", price:25, cat:'Apparel', emoji:'🧥', desc:'Lightweight quarter zip microfleece with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Black'], colorHex:{'Black':'#222'}, brand:'SDG', status:'In stock', available:7 },
+  { id:'womens-vneck', img:'Store%20items/Photo=Photo19.png', name:"Women's V-Neck Collar Shirt", price:25, cat:'Apparel', emoji:'👔', desc:'Women\'s v-neck polo shirt with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Navy','Blue','Purple'], colorHex:{'Navy':'#1a3f6f','Blue':'#2580d8','Purple':'#534AB7'}, brand:'SDG', status:'In stock', available:19 },
+  { id:'womens-hoodie2', img:'Store%20items/Photo=Photo20.png', name:"Women's Zip Up Hoodie", price:25, cat:'Apparel', emoji:'🧥', desc:'Classic women\'s zip up hoodie with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Blue','Purple'], colorHex:{'Blue':'#2580d8','Purple':'#534AB7'}, brand:'SDG', status:'In stock', available:13 },
+  { id:'womens-vneck2', img:'Store%20items/Photo=Photo21.png', name:"Women's V-Neck Collar Shirt", price:25, cat:'Apparel', emoji:'👔', desc:'Women\'s v-neck collar shirt, varied colors.', sizes:['XS','S','M','L','XL'], colors:['Pink','Red'], colorHex:{'Pink':'#d4537e','Red':'#cc3333'}, brand:'SDG', status:'In stock', available:8 },
+  { id:'womens-scoop', img:'Store%20items/Photo=Photo22.png', name:"Women's Scoop Neck Shirt", price:25, cat:'Apparel', emoji:'👕', desc:'Women\'s scoop neck cap-sleeve shirt with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Black','Blue','Red'], colorHex:{'Black':'#222','Blue':'#2580d8','Red':'#cc3333'}, brand:'SDG', status:'In stock', available:10 },
+  { id:'womens-scoop2', img:'Store%20items/Photo=Photo23.png', name:"Women's Scoop Neck Shirt", price:25, cat:'Apparel', emoji:'👕', desc:'Women\'s scoop neck short sleeve shirt with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Pink','White'], colorHex:{'Pink':'#d4537e','White':'#f0f0f0'}, brand:'SDG', status:'In stock', available:6 },
+  { id:'jacket', img:'Store%20items/Photo=Photo11.png', name:"Women's Lightweight Jacket", price:25, cat:'Apparel', emoji:'🧥', desc:'Lightweight women\'s Carhartt jacket with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['Navy','Black'], colorHex:{'Navy':'#1a3f6f','Black':'#222'}, brand:'Carhartt', status:'In stock', available:9 },
+  { id:'womens-scoop3', img:'Store%20items/Photo=Photo22.png', name:"Women's Scoop Neck Shirt", price:25, cat:'Apparel', emoji:'👕', desc:'Women\'s scoop neck shirt.', sizes:['XS','S','M','L','XL'], colors:['Blue','Red'], colorHex:{'Blue':'#2580d8','Red':'#cc3333'}, brand:'SDG', status:'In stock', available:7 },
+  { id:'traveler-cap', img:'Store%20items/Photo=Photo31.png', name:'Traveler Cap', price:25, cat:'Accessories', emoji:'🎩', desc:'Classic SDG trucker-style traveler cap.', sizes:[], colors:['Khaki','Navy'], colorHex:{'Khaki':'#c8a96e','Navy':'#1a3f6f'}, brand:'SDG', status:'In stock', available:10 },
+  { id:'mens-golf2', img:'Store%20items/Photo=Photo16.png', name:"Men's Golf Shirt", price:25, cat:'Apparel', emoji:'👔', desc:'Men\'s Puma polo shirt with SDG logo.', sizes:['S','M','L','XL','2XL'], colors:['White','Blue','Red'], colorHex:{'White':'#f0f0f0','Blue':'#2580d8','Red':'#cc3333'}, brand:'Puma', status:'In stock', available:14 },
+  { id:'mens-pattern', img:'Store%20items/Photo=Photo25.png', name:"Men's Pattern Golf Shirt", price:25, cat:'Apparel', emoji:'👔', desc:'Patterned men\'s golf shirt with SDG logo.', sizes:['S','M','L','XL','2XL'], colors:['Blue','White'], colorHex:{'Blue':'#2580d8','White':'#f0f0f0'}, brand:'SDG', status:'In stock', available:11 },
+  { id:'mens-hangout', img:'Store%20items/Photo=Photo13.png', name:"Men's Hangout Golf Shirt", price:25, cat:'Apparel', emoji:'👔', desc:'Casual long-sleeve men\'s button shirt with SDG logo.', sizes:['S','M','L','XL','2XL'], colors:['Navy','Grey','Red'], colorHex:{'Navy':'#1a3f6f','Grey':'#888','Red':'#cc3333'}, brand:'SDG', status:'In stock', available:8 },
+  { id:'mens-hangout2', img:'Store%20items/Photo=Photo26.png', name:"Men's Hangout Shirt", price:25, cat:'Apparel', emoji:'👕', desc:'Men\'s casual FootJoy shirt with SDG logo.', sizes:['S','M','L','XL','2XL'], colors:['Blue','Navy'], colorHex:{'Blue':'#2580d8','Navy':'#1a3f6f'}, brand:'FootJoy', status:'In stock', available:15 },
+  { id:'womens-half-zip2', img:'Store%20items/Photo=Photo24.png', name:"Women's 1/2 Zip Sweatshirt", price:25, cat:'Apparel', emoji:'🧥', desc:'Women\'s New Era half zip sweatshirt with SDG logo.', sizes:['XS','S','M','L','XL'], colors:['White','Grey'], colorHex:{'White':'#f0f0f0','Grey':'#888'}, brand:'New Era', status:'In stock', available:12 },
+];
+
+
+let cart = [];
+let currentProduct = null;
+let currentCat = 'all';
+
+function productCardHTML(p) {
+  const colorDots = (p.colors||[]).slice(0,3).map(c => `<div class="color-dot" style="background:${p.colorHex?.[c]||'#ccc'}"></div>`).join('');
+  const isSoldOut = p.available === 0;
+  return `
+  <div class="product-card" onclick="openModal('${p.id}')">
+    ${p.lowStock ? '<div class="badge-low">Only '+p.available+' left</div>' : ''}
+    <div class="product-img${!p.img ? ' product-img-emoji' : ''}">${p.img ? `<img src="${p.img}" alt="${p.name}" loading="lazy">` : `<span>${p.emoji}</span>`}</div>
+    <div class="product-body">
+      <div class="product-name">${p.name}</div>
+      <div class="price-row">
+        <div class="color-dots">${colorDots}</div>
+        <div class="product-price">$${p.price}</div>
+      </div>
+      <button class="add-to-cart-btn ${isSoldOut ? 'sold-out' : ''}" onclick="event.stopPropagation();${isSoldOut ? '' : `quickAdd('${p.id}')`}">
+        ${isSoldOut ? 'Sold Out' : '<i data-lucide="shopping-cart"></i> Add to cart'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderProducts(list) {
+  const grid = document.getElementById('products-grid');
+  if (!list.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);">No products found.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(productCardHTML).join('');
+  document.getElementById('products-count').textContent = list.length + ' results';
+  lucide.createIcons();
+}
+
+
+function openModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  currentProduct = { ...p, selectedSize: p.sizes[0] || null, selectedColor: p.colors[0] || null };
+
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-price').textContent = '$' + p.price;
+  const defaultImgSrc = (p.colorImgs?.[currentProduct.selectedColor] || p.img);
+  document.getElementById('modal-main-img').innerHTML = defaultImgSrc
+    ? `<img src="${defaultImgSrc}" alt="${p.name}">`
+    : p.emoji;
+  document.getElementById('modal-desc').textContent = p.desc;
+
+  // Thumbnails
+  const thumbsEl = document.getElementById('modal-thumbs');
+  if (p.colorImgs && Object.keys(p.colorImgs).length > 1) {
+    const uniqueImgs = [...new Map(Object.entries(p.colorImgs)).entries()];
+    // deduplicate by src so we don't show duplicate thumb for same image
+    const seen = new Set();
+    thumbsEl.innerHTML = uniqueImgs.filter(([,src]) => {
+      if (seen.has(src)) return false;
+      seen.add(src); return true;
+    }).map(([cn, src]) =>
+      `<div class="modal-thumb ${cn === currentProduct.selectedColor ? 'active' : ''}" data-color="${cn}" onclick="selectColorFromThumb('${cn}')"><img src="${src}" alt="${cn}" style="width:100%;height:100%;object-fit:cover;"></div>`
+    ).join('');
+  } else if (p.img) {
+    thumbsEl.innerHTML = `<div class="modal-thumb active"><img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+  } else {
+    thumbsEl.innerHTML = '';
+  }
+
+  // Sizes
+  const sizeSec = document.getElementById('modal-size-section');
+  sizeSec.style.display = p.sizes.length ? '' : 'none';
+  if (p.sizes.length) {
+    document.getElementById('modal-sizes').innerHTML = p.sizes.map(s =>
+      `<button class="size-btn ${s === currentProduct.selectedSize ? 'selected' : ''}" onclick="selectSize('${s}',this)">${s}</button>`
+    ).join('');
+  }
+
+  // Colors
+  const colorSec = document.getElementById('modal-color-section');
+  colorSec.style.display = p.colors.length ? '' : 'none';
+  if (p.colors.length) {
+    document.getElementById('modal-colors').innerHTML = p.colors.map(c =>
+      `<button class="color-btn ${c === currentProduct.selectedColor ? 'selected' : ''}" onclick="selectColor('${c}',this)">
+        <div class="color-swatch" style="background:${p.colorHex?.[c]||'#ccc'}"></div>${c}
+       </button>`
+    ).join('');
+  }
+
+  // Meta
+  document.getElementById('modal-meta').innerHTML = `
+    <span class="meta-key">Brand</span><span>${p.brand||'SDG'}</span>
+    <span class="meta-key">Category</span><span>${p.cat}</span>
+    ${p.status ? `<span class="meta-key">Status</span><span>${p.status}</span>` : ''}
+    <span class="meta-key">Available</span><span>${p.available}</span>
+  `;
+
+  const overlay = document.getElementById('product-modal');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function selectSize(s, el) {
+  currentProduct.selectedSize = s;
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectColor(c, el) {
+  currentProduct.selectedColor = c;
+  document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const imgSrc = currentProduct.colorImgs?.[c] || currentProduct.img;
+  if (imgSrc) document.getElementById('modal-main-img').innerHTML = `<img src="${imgSrc}" alt="${currentProduct.name}">`;
+  document.querySelectorAll('.modal-thumb[data-color]').forEach(t => t.classList.toggle('active', t.dataset.color === c));
+}
+function selectColorFromThumb(c) {
+  const btn = [...document.querySelectorAll('.color-btn')].find(b => b.textContent.trim() === c);
+  if (btn) selectColor(c, btn);
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('product-modal')) closeModalBtn();
+}
+function closeModalBtn() {
+  document.getElementById('product-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function addToCartFromModal() {
+  if (!currentProduct) return;
+  const qtyText = document.getElementById('modal-qty').value;
+  const qty = parseInt(qtyText.replace('Qty: ', '')) || 1;
+  addToCart(currentProduct.id, currentProduct.selectedSize, currentProduct.selectedColor, qty);
+  closeModalBtn();
+}
+
+function quickAdd(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p || p.available === 0) return;
+  if (p.sizes.length || p.colors.length) {
+    openModal(id);
+  } else {
+    addToCart(id, null, null, 1);
+  }
+}
+
+function addToCart(id, size, color, qty) {
+  const p = PRODUCTS.find(x => x.id === id);
+  const key = id + '|' + (size||'') + '|' + (color||'');
+  const existing = cart.find(i => i.key === key);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    const imgSrc = (p.colorImgs?.[color] || p.img) || null;
+    cart.push({ key, id, name: p.name, price: p.price, emoji: p.emoji, icon: p.icon || null, img: imgSrc, size, color, qty });
+  }
+  updateCartCount();
+  showToast('Added to cart: ' + p.name);
+}
+
+function updateEmailPlaceholder() {
+  const first = document.getElementById('first-name').value.trim().toLowerCase();
+  const last = document.getElementById('last-name').value.trim().toLowerCase();
+  const parts = [first, last].filter(Boolean);
+  document.getElementById('email-input').placeholder = parts.length
+    ? parts.join('.') + '@solutiondesign.com'
+    : 'you@solutiondesign.com';
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = total;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (page === 'cart') renderCart();
+  window.scrollTo(0, 0);
+}
+
+function renderCart() {
+  const list = document.getElementById('cart-items-list');
+  const empty = document.getElementById('cart-empty');
+  const content = document.getElementById('cart-content');
+
+  if (cart.length === 0) {
+    empty.style.display = '';
+    content.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  content.style.display = '';
+
+  list.innerHTML = cart.map((item, i) => `
+    <div class="cart-item">
+      <div class="cart-item-img">${item.img ? `<img src="${item.img}" alt="${item.name}">` : `<span style="font-size:26px;">${item.emoji}</span>`}</div>
+      <div class="cart-item-info">
+        <span class="cart-item-price">$${item.price * item.qty}</span>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-attrs">
+          ${item.size ? 'Size: ' + item.size + '  ' : ''}
+          ${item.color ? 'Color: ' + item.color : ''}
+        </div>
+        <div class="cart-item-controls">
+          <select class="qty-select-sm" onchange="updateQty(${i}, this.value)">
+            ${[1,2,3,4,5].map(n => `<option ${n===item.qty?'selected':''}>${n}</option>`).join('')}
+          </select>
+          <button class="remove-btn" onclick="removeItem(${i})"><i data-lucide="trash-2"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  lucide.createIcons();
+  updateOrderSummary();
+}
+
+function updateQty(i, v) {
+  cart[i].qty = parseInt(v);
+  updateCartCount();
+  updateOrderSummary();
+  renderCartItems();
+}
+function removeItem(i) {
+  cart.splice(i, 1);
+  updateCartCount();
+  renderCart();
+}
+function renderCartItems() {
+  const list = document.getElementById('cart-items-list');
+  if (!list) return;
+  list.innerHTML = cart.map((item, i) => `
+    <div class="cart-item">
+      <div class="cart-item-img">${item.img ? `<img src="${item.img}" alt="${item.name}">` : `<span style="font-size:26px;">${item.emoji}</span>`}</div>
+      <div class="cart-item-info">
+        <span class="cart-item-price">$${item.price * item.qty}</span>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-attrs">
+          ${item.size ? 'Size: ' + item.size + '  ' : ''}
+          ${item.color ? 'Color: ' + item.color : ''}
+        </div>
+        <div class="cart-item-controls">
+          <select class="qty-select-sm" onchange="updateQty(${i}, this.value)">
+            ${[1,2,3,4,5].map(n => `<option ${n===item.qty?'selected':''}>${n}</option>`).join('')}
+          </select>
+          <button class="remove-btn" onclick="removeItem(${i})"><i data-lucide="trash-2"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+function updateOrderSummary() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('order-total').textContent = '$' + total;
+
+}
+
+async function checkout() {
+  const firstName = document.getElementById('first-name').value.trim();
+  const lastName = document.getElementById('last-name').value.trim();
+  const email = document.getElementById('email-input').value.trim();
+
+  if (!firstName || !lastName) { alert('Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const delivery = document.querySelector('input[name="delivery"]:checked').value;
+  const orderNum = Math.floor(100000000 + Math.random() * 900000000);
+
+  const itemLines = cart.map(i =>
+    `  - ${i.name}${i.size ? ' ('+i.size+')' : ''}${i.color ? ' / '+i.color : ''} x${i.qty} = $${i.price * i.qty}`
+  ).join('\n');
+
+  const paymentDetail = [
+    '$' + Math.min(SDG_BUCKS, total) + ' SDG Bucks ($0 remain)',
+    '$' + Math.min(SUPPORT_LOCAL, Math.max(0, total - SDG_BUCKS)) + ' Support Local ($0 remain)',
+    remaining > 0 ? '$' + remaining + ' cash or check' : ''
+  ].filter(Boolean).join('\n');
+
+  const emailBody = encodeURIComponent(
+    `Hi Jill,\n\nA new SDG Shop order has been placed!\n\n` +
+    `Order Number: ${orderNum}\n` +
+    `Customer: ${firstName} ${lastName}\n` +
+    `Email: ${email}\n\n` +
+    `Items:\n${itemLines}\n\n` +
+    `Order Total: $${total}\n` +
+    `Delivery: ${delivery}\n` +
+    `Payment:\n${paymentDetail}\n\n` +
+    `Please process and reach out to ${firstName} with pickup/shipping instructions.\n\nThank you!`
+  );
+
+  const subject = encodeURIComponent(`SDG Shop Order #${orderNum} — ${firstName} ${lastName}`);
+  const mailto = `mailto:jill@solutiondesign.com?subject=${subject}&body=${emailBody}`;
+
+  // Show success page
+  document.getElementById('success-title').textContent = `Thanks for your order, ${firstName}!`;
+  document.getElementById('success-email').textContent = email;
+  document.getElementById('success-order-num').textContent = orderNum;
+  document.getElementById('success-total').textContent = '$' + total;
+  document.getElementById('success-delivery').textContent = delivery;
+  document.getElementById('success-payment').textContent = paymentDetail;
+
+  document.getElementById('success-items').innerHTML = cart.map(item => `
+    <div class="order-item-row">
+      <div class="order-item-img">${item.img ? `<img src="${item.img}" alt="${item.name}">` : `<span style="font-size:22px;">${item.emoji}</span>`}</div>
+      <div class="order-item-info">
+        <div class="order-item-name">${item.name}</div>
+        <div class="order-item-attrs">
+          ${item.color ? 'Color: ' + item.color : ''}
+          ${item.size ? ' &nbsp;Size: ' + item.size : ''}
+          &nbsp;Quantity: ${item.qty}
+        </div>
+      </div>
+      <div class="order-item-price">$${item.price * item.qty}</div>
+    </div>
+  `).join('');
+
+  lucide.createIcons();
+  // Open mailto
+  window.location.href = mailto;
+
+  // Navigate to success
+  showPage('success');
+  cart = [];
+  updateCartCount();
+}
+
+function resetShop() {
+  cart = [];
+  updateCartCount();
+  showPage('home');
+}
+
+
+// Init
+renderProducts(PRODUCTS);
+lucide.createIcons();
+</script>
+</body>
+</html>
